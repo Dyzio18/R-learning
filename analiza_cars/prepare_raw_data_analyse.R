@@ -18,6 +18,8 @@ library(ggplot2)
 
 cars <- read.table(file = "carsfix.txt", sep=",", dec=".", header=TRUE)
 
+carsB <- read.table(file = "carsfix.txt", sep=",", dec=".", header=TRUE)
+summary(carsB)
 
 # ============================================================================
 # Wykresy dla kazdej z kategorii wzgledem kraju produkcji - pozwala wykryc nieprawidlowe i skrajne dane
@@ -87,10 +89,31 @@ cars <- cars[complete.cases(cars),]
 
 
 for(i in colnames(cars)){
-  boxplot(cars[i])
-  # hist(cars[i])
+  if(i != 7){}
+    boxplot(cars[i], horizontal=TRUE)
+    hist(cars[i])
+  }
 }
 
+
+p <- boxplot(cars$mpg, horizontal=TRUE)
+
+
+
+hist(cars$mpg, main = "Histogram spalania", breaks=8)
+hist(cars$cylinders, main = "Histogram ilosci cylindrów", breaks=8)
+hist(cars$cubicinches, main = "Histogram pojemnosci silnika [in^3]")
+hist(cars$hp, main = "Histogram mocy [KM]")
+hist(cars$weightlbs, main = "Histogram wagi [lbs]")
+hist(cars$time.to.60, main = "Histogram przyspieszenia do 60 mil [s]")
+hist(cars$year, main = "Histogram roku produkcji")
+
+
+
+
+
+
+summary(cars)
 summary(cars$mpg)
 summary(cars$cylinders)
 summary(cars$cubicinches)
@@ -103,7 +126,7 @@ summary(cars$brand)
 # ============================================================================
 # Linear Regression
 scatter.smooth(x=cars$hp, y=cars$weightlbs, main="Weight / Power [HP]") 
-scatter.smooth(x=cars$cubicinches, y=cars$mpg, main="Mpg / Cubic inches") 
+scatter.smooth(x=cars$hp, y=cars$cubicinches, main="Pojemność silnika do mocy") 
 
 # ============================================================================
 # Wykresy dla kazdej z kategorii wzgledem kraju produkcji - pozwala wykryc nieprawidlowe i skrajne dane
@@ -181,8 +204,8 @@ carsCorDF <- data.frame(spalanie = cars[['mpg']],
 carsCorelation <- cor(carsCorDF)
 corrplot::corrplot(carsCorelation, method = "number")
 
-
+cor(carsCorelation)
 
 ggplot(cars,aes(x = cars$cubicinches ,y = cars$weightlbs ,colour = cars$brand, shape = cars$brand, size = cars$cylinders)) + geom_point()
 
-ggplot(cars,aes(x = cars$brand ,y = cars$hp ,colour = cars$brand, shape = cars$brand, size = cars$cylinders)) + geom_point() + geom_violin()
+ggplot(cars,aes(x = cars$brand ,y = cars$time.to.60)) + geom_point() + geom_violin()
