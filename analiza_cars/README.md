@@ -82,6 +82,12 @@ Następnie dokonałem zliczenia wartości NA (brakujące dane). Z 261 wierszy ty
 sum(is.na(cars))
 ```
 
+Usunąłem wiersze zawierające dziury zostawiając tylko pełne przypadki
+``` r
+cars <- cars[complete.cases(cars),]
+```
+
+
 ## Korekcja danych maksymalnych i nierealnych 
 
 Dana zawierały również  błędy takie jak nierealne wartości. Błędem grubym były samochody ważące 19 ton które przyśpieszają do 60 mil w 13 sekund.

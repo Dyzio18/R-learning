@@ -174,6 +174,8 @@ ggplot(cars, aes(x=cars$year, y=cars$brand)) + geom_point() + labs(title = &quot
 <h2>Usuwanie brakujacych danych</h2>
 <p>Następnie dokonałem zliczenia wartości NA (brakujące dane). Z 261 wierszy tylko w 9 miejcach brakowało danych. Uznałem że mogę pominąć te przypadki w dalszej analizie.</p>
 <pre class="r"><code>sum(is.na(cars))</code></pre>
+<p>Usunąłem wiersze zawierające dziury zostawiając tylko pełne przypadki</p>
+<pre class="r"><code>cars &lt;- cars[complete.cases(cars),]</code></pre>
 </div>
 <div id="korekcja-danych-maksymalnych-i-nierealnych" class="section level2">
 <h2>Korekcja danych maksymalnych i nierealnych</h2>
