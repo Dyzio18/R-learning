@@ -11,3 +11,10 @@ koty_ptaki[,1]
 nrow(koty_ptaki)
 # Ilosc kolumn
 ncol(koty_ptaki)
+
+# Indeksowanie 2, 6-8
+koty_ptaki[c(2,6:8),]
+# lub za pomoca zmiennej
+index <- c(2,6:8)
+koty_ptaki[index,]
+
