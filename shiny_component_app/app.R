@@ -6,6 +6,8 @@
 ###################
 library(shiny)
 library(shinydashboard)
+library(DT)
+
 
 source('./ui.R')
 source('./server.R')

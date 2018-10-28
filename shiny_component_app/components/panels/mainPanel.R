@@ -1,20 +1,4 @@
-###################
-# body.R
-# 
-# Create the body for the ui. 
-# If you had multiple tabs, you could potentially segment those into their own
-# components as well.
-###################
-library(shinydashboard)
-
-
-body <- dashboardBody(
-  tabItems(
-    
-    ########################
-    # First tab content
-    ########################
-    tabItem(
+mainPanel <- tabItem(
       tabName = "dashboard",
       fluidRow(
         
@@ -47,14 +31,4 @@ body <- dashboardBody(
           
         )
       )
-    ),
-    
-    ########################
-    # Second tab content
-    ########################
-    tabItem(
-      tabName = "widgets",
-      h2("Widgets tab content")
     )
-  )
-)
