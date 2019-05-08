@@ -1,0 +1,124 @@
+---
+title: "PCA - Analiza składowych głównych"
+author: "Patryk Nizio"
+date: "7 maja 2019"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(cowplot) 
+theme_set(theme_bw(base_size=12)) 
+library(dplyr)
+library(grid)
+
+```
+
+## PCA - wstęp
+
+Analiza składowych głównych (PCA) służy m.in. do redukcji liczby zmiennych opisujących zjawiska, czy do odkrycia prawidłowości między zmiennymi. Polega ona na wyznaczeniu składowych będących kombinacją liniową badanych zmiennych. Dokładna analiza składowych głównych umożliwia wskazanie tych zmiennych początkowych, które mają duży wpływ na wygląd poszczególnych składowych głównych czyli tych, które tworzą grupę jednorodną. Składowa główna (u której wariancja jest zmaksymalizowana) jest wówczas reprezentantem tej grupy.
+
+## Zestaw danych - Iris
+
+Zestaw danych "Iris" składa się z 50 próbek od każdego z trzech gatunków irysów (Iris setosa, Iris virginica i Iris versicolor). Z każdej próbki zmierzono cztery cechy: długość i szerokość działek i płatków w centymetrach.
+
+![Flower with petal & sepal](https://upload.wikimedia.org/wikipedia/commons/7/78/Petal-sepal.jpg)
+
+
+Przykładowe dane:  
+```{r, echo = TRUE}
+head(iris)
+```
+
+Statystyki opisowe 
+```{r cars, echo=FALSE}
+summary(iris)
+```
+
+## Wizualizacja danych
+
+Wykresy rozrzutu grupując po odmianie irysa: 
+
+```{r pressure, echo=FALSE}
+p1 <- ggplot(iris, aes(x=Sepal.Length, y=Sepal.Width, color=Species)) + geom_point()
+p2 <- ggplot(iris, aes(x=Petal.Length, y=Petal.Width, color=Species)) + geom_point()
+p3 <- ggplot(iris, aes(x=Sepal.Length, y=Petal.Length, color=Species)) + geom_point()
+p4 <- ggplot(iris, aes(x=Sepal.Width, y=Petal.Width, color=Species)) + geom_point()
+plot_grid(p1, p2, p3, p4, labels = "AUTO")
+```
+
+## PCA - analiza
+
+**Korelacja**
+
+Zbadano korelację metodą pearsona, istnieje silna korelacja między ___Petal.Length__ a __Petal.Width__ oraz __Sepal.Length__ i ___Petal.Length__, __Petal.Width__.
+
+```{r}
+cor(iris[1:4], method = "pearson")
+```
+
+**Wykres osypiska**
+
+Jest to wykres liniowy wartości własnych. Po drugim czynniku następuje łągodny spadek, uwzględniamy najbardziej znaczące czynniki czyli pierwszy i drugi. 
+
+```{r}
+
+species <- iris[, 5]
+logIris <- log(iris[, 1:4])
+irisPCA <- prcomp(logIris, center = TRUE, scale. = TRUE) 
+plot(irisPCA, type = "l")
+```
+
+Czynnik pierwszy jak widać na wykresie jest najbardziej znaczący. Natomiast pierwsze dwa czynniki odpowiadają za więcej niż 90% wariancji danych.
+
+```{r, echo = FALSE}
+y <- irisPCA$sdev^2 / sum(irisPCA$sdev^2) * 100
+barplot(y,
+names.arg=c("PC1", "PC2", "PC3", "PC4"),
+ylab = "Percent Variance Captured",
+xlab = "",
+main = "")
+```
+
+**Wyznaczenie wektorów własnych**
+
+```{r, echo = FALSE}
+irisPCA
+```
+
+**Wykres rozrzutu dla pierwszego i drugiego czynnika**
+
+```{r, echo = FALSE}
+pca_data <- data.frame(irisPCA$x, Species=iris$Species)
+ggplot(pca_data, aes(x=PC1, y=PC2, color=Species)) + geom_point() +theme_minimal()
+
+```
+
+Poniższy wykres rozrzutu pokazuje nam, ile każda zmienna przyczynia się do każdego głównego czynnika. Na przykład Sepal.Width ma niewielki wpływ na PC1, ale stanowi dużą część PC2, odwrotną sytuację mamy dla Petal.Width który wpływa w małym stopniu na PC2 ale ma duży wpływ na PC1.
+
+**Projekcja zmiennych na płaszczyznę czynników**
+
+```{r, echo = FALSE}
+rotation_data <- data.frame(irisPCA$rotation, variable=row.names(irisPCA$rotation))
+arrow_style <- arrow(length = unit(0.05, "inches"), type = "closed")
+
+ggplot(rotation_data) + 
+  geom_segment(aes(xend=PC1, yend=PC2), x=0, y=0, arrow=arrow_style) + 
+  geom_text(aes(x=PC1, y=PC2, label=variable), hjust=0, size=3, color='red') + 
+  xlim(-1.,1.25) + 
+  ylim(-1.,1.) +
+  coord_fixed()
+
+```
+
+## Podsumowanie
+
+Podczas analizy za pomocą PCA mamy możliwość analizowania czynników istotnych dla zjawiska. 
+Możemy zredukować liczbę wymiarów za pomocą niezależnych składowych głównych. 
+
+W pierwszym czynniku zmienne __Sepal.Length__, __Petal.Length__ i __Petal.Width__ są ze sobą skorelowane oraz odgrywają najważnieszą role przy rozpoznaniu odmiany irysów. W drugim czynniku najważnieszy była zmienna_ __Sepal.Width__ która pozwała odróżnić odmianę versicolor od virginica. 
